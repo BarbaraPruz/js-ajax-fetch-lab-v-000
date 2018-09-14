@@ -52,7 +52,7 @@ function createIssue() {
 
 function getIssues() {
   fetch(
-    `${githURI}/${user}/${repoName}/issues`,
+    `${githubURI}/${user}/${repoName}/issues`, 
     {
       method: 'GET',
       headers: {
