@@ -1,4 +1,7 @@
-var repoName;
+const githubURI = 'https://api.github.com/repos';
+const repoName = 'js-ajax-fetch-lab';
+
+var user;
 
 function getToken() {
   //change to your token to run in browser, but set
@@ -7,10 +10,10 @@ function getToken() {
 }
 
 function forkRepo() {
-  const repo = 'learn-co-curriculum/js-ajax-fetch-lab';
+  const learn = 'learn-co-curriculum';
   console.log("Going to fork repo");
   fetch(
-    `https://api.github.com/repos/${repo}/forks`,
+    `${githubURI}/${learn}/${repoName}/forks`,
     {
       method: 'POST',
       headers: {
@@ -23,9 +26,9 @@ function forkRepo() {
 
 function showResults(resp) {
   console.log("show results",resp);
-  repoName= resp.full_name;
   let link=`<a href=${resp.html_url}>${resp.full_name}</a>`;
-  document.getElementById('results').innerHTML += link;
+  user = resp.owner.login;
+  document.getElementById('results').innerHTML = link;
 }
 
 function createIssue() {
@@ -35,13 +38,8 @@ function createIssue() {
     body: document.getElementById('body').value
   };
   console.log('create issue',issueData);
-//  const repo = document.getElementById('results').getElementsByTagName('a')[0].innerHTML;
-const repo=repoName;
-  console.log("results",document.getElementById('results'));
-  console.log("and a",document.getElementById('results').getElementsByTagName('a')[0]);
-  console.log('repo ', repo);
   fetch(
-    `https://api.github.com/repos/${repo}/issues`,
+    `${githubURI}/${user}/${repoName}/issues`,
     {
       method: 'POST',
       body: JSON.stringify(issueData),
@@ -49,32 +47,29 @@ const repo=repoName;
         Authorization: `token ${getToken()}`
       }
     }
-  ).then(resp => getIssues())
+  ).then(resp => getIssues(resp))
 }
 
 function getIssues() {
-  //once an issue is submitted, fetch all open issues to see the issues you are creating
-//  const repo = document.getElementById('results').getElementsByTagName('a')[0].innerHTML;
-const repo=repoName;
-  console.log('get issues repo ', repo);
   fetch(
-    `https://api.github.com/repos/${repo}/issues`,
+    `${githURI}/${user}/${repoName}/issues`, 
     {
       method: 'GET',
       headers: {
         Authorization: `token ${getToken()}`
       }
     }
-  ).then(resp => JSON.stringify(resp))
-  .then (resp => showIssues(resp))
+  ).then(res => res.json())
+    .then(json => console.log(json));
 }
 
-function showIssues(issues) {
-  console.log ("show issues",resp);
-  let html = '<ul>';
-  issues.forEach ( function (issue) {
-    html += `<li>${issue.title}<li>`
-  })
-  html += '<ul>';
-  document.getElementById('issues').innerHTML = html;
-}
+
+// function showIssues(issues) {
+//   console.log ("show issues",resp);
+//   let html = '<ul>';
+//   issues.forEach ( function (issue) {
+//     html += `<li>${issue.title}<li>`
+//   })
+//   html += '<ul>';
+//   document.getElementById('issues').innerHTML = html;
+// }
